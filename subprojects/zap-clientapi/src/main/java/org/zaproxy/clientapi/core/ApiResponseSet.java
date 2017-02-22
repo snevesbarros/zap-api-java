@@ -57,11 +57,11 @@ public class ApiResponseSet extends ApiResponse {
 		Map<String, String> values = new HashMap<>();
 		while (child != null) {
 			ApiResponse childResponse =  ApiResponseFactory.getResponse(child);
-			if (childResponse instanceof ApiResponseElement) {
+			if (childResponse instanceof ApiResponseSet) {
+				childSet = (ApiResponseSet) ApiResponseFactory.getResponse(child);
+			} else {
 				ApiResponseElement elem = (ApiResponseElement) ApiResponseFactory.getResponse(child);
 				values.put(elem.getName(), elem.getValue());
-			} else if (childResponse instanceof ApiResponseSet){
-				childSet = (ApiResponseSet) ApiResponseFactory.getResponse(child);
 			}
 			child = child.getNextSibling();
 		}
@@ -147,6 +147,15 @@ public class ApiResponseSet extends ApiResponse {
 		return valuesMap.values();
 	}
 
+	/**
+	 * Gets the childSet.
+	 * 
+	 * @return the childSet, might be {@code null}.
+	 */
+	public ApiResponseSet getChildSet() {
+		return childSet;
+	}
+
 	@Override
 	public String toString(int indent) {
 		StringBuilder sb = new StringBuilder();
@@ -170,9 +179,5 @@ public class ApiResponseSet extends ApiResponse {
 		}
 		sb.append("]\n");
 		return sb.toString();
-	}
-
-	public ApiResponseSet getChildSet() {
-		return childSet;
 	}
 }
