@@ -30,6 +30,7 @@ public class ApiResponseSet extends ApiResponse {
 	
 	private String[] attributes = null;
 	private final Map<String, String> valuesMap;
+	private ApiResponseSet childSet = null;
 
 	/**
 	 * Constructs an {@code ApiResponseSet} with the given name and attributes.
@@ -55,8 +56,13 @@ public class ApiResponseSet extends ApiResponse {
 		Node child = node.getFirstChild();
 		Map<String, String> values = new HashMap<>();
 		while (child != null) {
-			ApiResponseElement elem = (ApiResponseElement) ApiResponseFactory.getResponse(child);
-			values.put(elem.getName(), elem.getValue());
+			ApiResponse childResponse =  ApiResponseFactory.getResponse(child);
+			if (childResponse instanceof ApiResponseElement) {
+				ApiResponseElement elem = (ApiResponseElement) ApiResponseFactory.getResponse(child);
+				values.put(elem.getName(), elem.getValue());
+			} else if (childResponse instanceof ApiResponseSet){
+				childSet = (ApiResponseSet) ApiResponseFactory.getResponse(child);
+			}
 			child = child.getNextSibling();
 		}
 		this.valuesMap = Collections.unmodifiableMap(values);
@@ -166,5 +172,7 @@ public class ApiResponseSet extends ApiResponse {
 		return sb.toString();
 	}
 
-	
+	public ApiResponseSet getChildSet() {
+		return childSet;
+	}
 }
